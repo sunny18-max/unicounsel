@@ -132,7 +132,7 @@ const calculateTimingScore = (student: StudentProfile, program: ProgramMatch): n
   // Simple implementation - check if the desired start date aligns with program intakes
   if (!program.admissionRequirements.intakes) return 50;
   
-  const targetYear = student.startTimeframe.match(/\d{4}/)?.[0];
+  // const targetYear = student.startTimeframe.match(/\d{4}/)?.[0];
   const targetSeason = student.startTimeframe.toLowerCase().includes('sep') ? 'September' : 'March';
   
   if (program.admissionRequirements.intakes.includes(targetSeason)) {

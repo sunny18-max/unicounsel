@@ -31,15 +31,45 @@ interface GoogleSignInProps {
   mode?: 'signin' | 'signup';
 }
 
-// Declare google types
+// Google OAuth types
+interface CredentialResponse {
+  credential: string;
+  select_by: string;
+}
+
+type PromptMomentNotification = {
+  isDisplayed: () => boolean;
+  getNotDisplayedReason: () => string;
+  isSkipped: () => boolean;
+  getSkippedReason: () => string;
+  isDismissed: () => boolean;
+  getDismissedReason: () => string;
+  getMomentType: () => string;
+};
+
+type PromptCallback = (notification: PromptMomentNotification) => void;
+
 declare global {
   interface Window {
     google?: {
       accounts: {
         id: {
-          initialize: (config: any) => void;
-          renderButton: (element: HTMLElement, config: any) => void;
-          prompt: () => void;
+          initialize: (config: {
+            client_id: string;
+            callback: (response: CredentialResponse) => void;
+            auto_select?: boolean;
+            cancel_on_tap_outside?: boolean;
+          }) => void;
+          renderButton: (element: HTMLElement, config: {
+            type: string;
+            theme: string;
+            size: string;
+            text: string;
+            shape: string;
+            logo_alignment: string;
+            width: string | number;
+          }) => void;
+          prompt: (callback?: PromptCallback) => void;
         };
       };
     };
@@ -49,7 +79,7 @@ declare global {
 export const GoogleSignIn = ({ onSuccess, mode = 'signin' }: GoogleSignInProps) => {
   const navigate = useNavigate();
 
-  const handleCredentialResponse = (response: any) => {
+  const handleCredentialResponse = (response: CredentialResponse) => {
     try {
       // Decode the JWT token to get user info
       const base64Url = response.credential.split('.')[1];
@@ -110,12 +140,7 @@ export const GoogleSignIn = ({ onSuccess, mode = 'signin' }: GoogleSignInProps) 
         });
 
         // Trigger the Google Sign-In popup
-        window.google.accounts.id.prompt((notification: any) => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            console.log('Google Sign-In prompt was not displayed:', notification.getNotDisplayedReason());
-            alert('Google Sign-In is temporarily unavailable. Please try again or use the Demo User option.');
-          }
-        });
+        window.google.accounts.id.prompt();
       } catch (error) {
         console.error('Google Sign-In initialization error:', error);
         alert(

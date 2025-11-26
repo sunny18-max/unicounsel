@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, _password: string) => {
     // Implement your login logic here
     // This is a placeholder - replace with actual API call
     try {
@@ -126,7 +126,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     navigate('/login');
   };
 
-  const register = async (email: string, password: string, name: string) => {
+  const register = async (email: string, _password: string, name: string) => {
     // Implement your registration logic here
     try {
       setIsLoading(true);
