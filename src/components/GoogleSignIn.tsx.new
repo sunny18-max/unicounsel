@@ -1,0 +1,46 @@
+import { Button } from './ui/button';
+import { FaGoogle } from 'react-icons/fa';
+import { getGoogleAuthUrl } from '@/config/auth';
+
+interface GoogleSignInProps {
+  onSuccess?: () => void;
+  className?: string;
+  buttonText?: string;
+}
+
+const GoogleSignIn = ({
+  onSuccess,
+  className = '',
+  buttonText = 'Continue with Google',
+}: GoogleSignInProps) => {
+  const handleGoogleLogin = () => {
+    try {
+      // Store the current URL so we can redirect back after login
+      localStorage.setItem('preAuthRoute', window.location.pathname);
+      // Redirect to Google's OAuth page
+      window.location.href = getGoogleAuthUrl();
+      
+      // Call success handler if provided
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      onClick={handleGoogleLogin}
+      className={`w-full flex items-center justify-center gap-2 ${className}`}
+    >
+      <FaGoogle className="w-4 h-4" />
+      {buttonText}
+    </Button>
+  );
+};
+
+export default GoogleSignIn;

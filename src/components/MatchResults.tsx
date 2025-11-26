@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -14,20 +15,53 @@ interface MatchResultsProps {
 }
 
 export const MatchResults = ({ matches }: MatchResultsProps) => {
+  const [savedIds, setSavedIds] = React.useState<Set<string>>(new Set());
+
+  React.useEffect(() => {
+    // Load saved matches on mount
+    const saved = JSON.parse(localStorage.getItem('savedMatches') || '[]');
+    setSavedIds(new Set(saved.map((m: UniversityMatch) => m.id)));
+  }, []);
+
+  // University images mapping (using Unsplash for university/building images)
+  const getUniversityImage = (universityName: string) => {
+    const seed = encodeURIComponent(universityName.toLowerCase().replace(/\s+/g, '-'));
+    return `https://source.unsplash.com/800x400/?university,${seed},campus,building`;
+  };
+
   const handleApply = (match: UniversityMatch) => {
-    // Open university website in new tab
-    window.open(match.universityName, '_blank');
+    // Create a Google search URL for the university's official website
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(match.universityName + ' official website')}`;
+    window.open(searchUrl, '_blank');
   };
 
   const handleSave = (match: UniversityMatch) => {
-    // Save to localStorage
     const saved = JSON.parse(localStorage.getItem('savedMatches') || '[]');
-    if (!saved.find((m: UniversityMatch) => m.id === match.id)) {
+    
+    if (!savedIds.has(match.id)) {
+      // Add to saved
       saved.push(match);
       localStorage.setItem('savedMatches', JSON.stringify(saved));
-      alert(`${match.universityName} saved to your favorites!`);
+      setSavedIds(new Set([...savedIds, match.id]));
+      
+      // Show success message
+      const message = document.createElement('div');
+      message.className = 'fixed top-20 right-6 bg-success text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-in slide-in-from-right';
+      message.textContent = `${match.universityName} saved to favorites!`;
+      document.body.appendChild(message);
+      setTimeout(() => message.remove(), 3000);
     } else {
-      alert('This university is already in your saved list.');
+      // Remove from saved
+      const updated = saved.filter((m: UniversityMatch) => m.id !== match.id);
+      localStorage.setItem('savedMatches', JSON.stringify(updated));
+      setSavedIds(new Set([...savedIds].filter(id => id !== match.id)));
+      
+      // Show removed message
+      const message = document.createElement('div');
+      message.className = 'fixed top-20 right-6 bg-warning text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-in slide-in-from-right';
+      message.textContent = `${match.universityName} removed from favorites`;
+      document.body.appendChild(message);
+      setTimeout(() => message.remove(), 3000);
     }
   };
 
@@ -64,23 +98,35 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
               <Card 
                 key={match.id} 
                 className={cn(
-                  "border-2 transition-all duration-300 hover:shadow-lg hover:shadow-glow-cyan/20",
+                  "border-2 transition-all duration-300 hover:shadow-lg hover:shadow-glow-cyan/20 overflow-hidden",
                   index === 0 && "border-glow-cyan glow-cyan"
                 )}
               >
+                {/* University Image */}
+                <div className="relative h-56 overflow-hidden bg-secondary">
+                  <img 
+                    src={getUniversityImage(match.universityName)}
+                    alt={match.universityName}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = `https://source.unsplash.com/800x400/?university,campus,building`;
+                    }}
+                  />
+                  <div className="absolute top-3 right-3 flex gap-2">
+                    {index === 0 && (
+                      <Badge className="bg-glow-cyan text-background">
+                        Best Match
+                      </Badge>
+                    )}
+                    <Badge className="bg-background/90 text-foreground">
+                      #{index + 1}
+                    </Badge>
+                  </div>
+                </div>
+
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Badge variant="outline" className="text-lg font-semibold">
-                          #{index + 1}
-                        </Badge>
-                        {index === 0 && (
-                          <Badge className="bg-glow-cyan text-background">
-                            Best Match
-                          </Badge>
-                        )}
-                      </div>
                       <CardTitle className="text-heading-3 mb-2">
                         {match.universityName}
                       </CardTitle>
@@ -237,11 +283,12 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                     <Button 
-                      variant="outline"
+                      variant={savedIds.has(match.id) ? "default" : "outline"}
                       onClick={() => handleSave(match)}
+                      className={savedIds.has(match.id) ? "bg-glow-blue text-white" : ""}
                     >
-                      <Bookmark className="mr-2 h-4 w-4" />
-                      Save
+                      <Bookmark className={cn("mr-2 h-4 w-4", savedIds.has(match.id) && "fill-current")} />
+                      {savedIds.has(match.id) ? 'Saved' : 'Save'}
                     </Button>
                   </div>
                 </CardContent>

@@ -1,17 +1,25 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { VoiceOrb } from './VoiceOrb';
 import { MatchResults } from './MatchResults';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
-import { Mic, MicOff, SkipForward } from 'lucide-react';
+import { Mic, MicOff, SkipForward, LayoutDashboard, Home } from 'lucide-react';
 import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
+import { useMatches } from '@/context/MatchContext';
 import { questions } from '@/data/questions';
 import { generateMockMatches } from '@/data/mockMatches';
 import type { StudentProfile, UniversityMatch, ConversationState } from '@/types';
 import { cn } from '@/lib/utils';
 
-export const VoiceAssistant = () => {
+interface VoiceAssistantProps {
+  onComplete?: (matches: UniversityMatch[]) => void;
+}
+
+export const VoiceAssistant = ({ onComplete }: VoiceAssistantProps) => {
+  const navigate = useNavigate();
+  const { setMatches: setGlobalMatches, setStudentProfile } = useMatches();
   const [conversationState, setConversationState] = useState<ConversationState>('idle');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -89,6 +97,8 @@ export const VoiceAssistant = () => {
         const profile = createProfileFromAnswers(newAnswers);
         const generatedMatches = await generateMockMatches(profile);
         setMatches(generatedMatches);
+        setGlobalMatches(generatedMatches);
+        setStudentProfile(profile);
         setConversationState('completed');
         
         speak(`Great news! I found ${generatedMatches.length} excellent matches for you. Let me show you the results.`);
@@ -132,11 +142,46 @@ export const VoiceAssistant = () => {
   };
 
   if (conversationState === 'completed' && matches.length > 0) {
-    return <MatchResults matches={matches} />;
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="absolute top-6 right-6 z-10">
+          <Button
+            size="lg"
+            onClick={() => {
+              if (onComplete) onComplete(matches);
+              navigate('/dashboard');
+            }}
+            className="bg-glow-cyan text-background hover:bg-glow-cyan/90 glow-cyan"
+          >
+            <LayoutDashboard className="mr-2 h-5 w-5" />
+            Go to Dashboard
+          </Button>
+        </div>
+        <MatchResults matches={matches} />
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+      {/* Back to Home Button */}
+      <div className="absolute top-6 left-6 z-10">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            // Clear authentication and reload to reset app state
+            localStorage.removeItem('isAuthenticated');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+          }}
+          className="border-border hover:border-glow-cyan/50"
+        >
+          <Home className="mr-2 h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
+
       <div className="w-full max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
