@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from 'styled-components';
-import { theme, Theme } from './index';
+import type { Theme } from './index';
 
 export const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
   * {
@@ -80,7 +80,10 @@ export const Box = styled.div<{
   height: ${({ height }) => height || 'auto'};
   background-color: ${({ bg, theme }) => 
     bg && (theme.colors as any)[bg] ? (theme.colors as any)[bg] : bg || 'transparent'};
-  border-radius: ${({ borderRadius = 'md', theme }) => theme.borderRadius[borderRadius]};
+  border-radius: ${({ borderRadius = 'md', theme }) => {
+    const radius = borderRadius as keyof Theme['borderRadius'];
+    return theme.borderRadius[radius];
+  }};
   box-shadow: ${({ shadow, theme }) => shadow ? theme.shadows[shadow] : 'none'};
 `;
 
@@ -92,8 +95,10 @@ export const Text = styled.p<{
   weight?: number | string;
   lineHeight?: number | string;
 }>`
-  font-size: ${({ variant = 'body1', theme }) => 
-    variant in theme.typography ? theme.typography[variant as keyof Theme['typography']] : variant};
+  font-size: ${({ variant = 'body1', theme }) => {
+    const typographyVariant = variant as keyof Theme['typography'];
+    return typographyVariant in theme.typography ? theme.typography[typographyVariant] : variant;
+  }};
   color: ${({ color = 'text.primary', theme }) => 
     color in theme.colors ? (theme.colors as any)[color] : color};
   text-align: ${({ align = 'left' }) => align};
@@ -112,7 +117,7 @@ export const Input = styled.input<{ error?: boolean }>`
   width: 100%;
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
   border: 1px solid ${({ theme, error }) => 
-    error ? theme.colors.error : theme.colors.border};
+    error ? theme.colors.error : (theme.colors.border || '#E5E7EB')};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   font-size: ${({ theme }) => theme.typography.body1};
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -149,17 +154,17 @@ export const Button = styled.button<{
       case 'sm':
         return `
           padding: ${theme.spacing.xs} ${theme.spacing.md};
-          font-size: ${theme.typography.caption};
+          font-size: ${theme.typography.caption || '0.75rem'};
         `;
       case 'lg':
         return `
           padding: ${theme.spacing.md} ${theme.spacing.lg};
-          font-size: ${theme.typography.h5};
+          font-size: ${theme.typography.h5 || '1.25rem'};
         `;
       default: // md
         return `
           padding: ${theme.spacing.sm} ${theme.spacing.lg};
-          font-size: ${theme.typography.body1};
+          font-size: ${theme.typography.body1 || '1rem'};
         `;
     }
   }}
@@ -202,7 +207,7 @@ export const Button = styled.button<{
           color: white;
           
           &:hover {
-            background-color: ${theme.colors.primaryDark};
+            background-color: ${theme.colors.primaryDark || theme.colors.primary};
           }
         `;
     }
@@ -264,7 +269,7 @@ export const AuthForm = styled.form`
   margin: 0 auto;
   padding: ${({ theme }) => theme.spacing.xl};
   background-color: ${({ theme }) => theme.colors.surface};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  border-radius: ${({ theme }) => theme.borderRadius.xl || theme.borderRadius.lg};
   box-shadow: ${({ theme }) => theme.shadows.lg};
 `;
 
@@ -290,4 +295,20 @@ export const VisuallyHidden = styled.span`
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+`;
+
+// Avatar Component
+export const Avatar = styled.img<{ size?: 'sm' | 'md' | 'lg' }>`
+  border-radius: ${({ theme }) => theme.borderRadius.full};
+  object-fit: cover;
+  ${({ size = 'md' }) => {
+    switch (size) {
+      case 'sm':
+        return 'width: 32px; height: 32px;';
+      case 'lg':
+        return 'width: 64px; height: 64px;';
+      default:
+        return 'width: 48px; height: 48px;';
+    }
+  }}
 `;

@@ -1,10 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Box, Button, Container, Flex, Heading, Text, Card } from '../theme/styled';
 import { VoiceAssistant } from '../components/VoiceAssistant';
 
 const StudentDashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [showVoiceAssistant, setShowVoiceAssistant] = React.useState(false);
   const [matches, setMatches] = React.useState<any[]>([]);
 
@@ -22,11 +20,11 @@ const StudentDashboard: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="xl">
+    <Container>
       <Box my="xl">
-        <Flex justifyContent="space-between" alignItems="center" mb="xl">
+        <Flex justify="space-between" align="center" style={{ marginBottom: '2rem' }}>
           <div>
-            <Heading as="h1" mb="sm">Welcome back, Student</Heading>
+            <Heading variant="h1" style={{ marginBottom: '0.5rem' }}>Welcome back, Student</Heading>
             <Text color="text.secondary">Find your perfect study abroad match</Text>
           </div>
           <Button onClick={handleFindMatches}>
@@ -36,14 +34,14 @@ const StudentDashboard: React.FC = () => {
 
         {matches.length > 0 ? (
           <Box>
-            <Heading as="h2" mb="md" fontSize="xl">Your Matches</Heading>
-            <Flex gap="md" flexWrap="wrap">
+            <Heading variant="h2" style={{ marginBottom: '1rem', fontSize: '2rem' }}>Your Matches</Heading>
+            <Flex gap="md" wrap="wrap">
               {matches.slice(0, 3).map((match, index) => (
-                <Card key={index} p="lg" width="300px">
-                  <Heading as="h3" fontSize="lg" mb="sm">{match.university}</Heading>
-                  <Text color="text.secondary" fontSize="sm" mb="md">{match.program}</Text>
-                  <Text mb="sm">Match Score: {match.matchScore}%</Text>
-                  <Button size="sm" variant="outline" width="100%">
+                <Card key={index} p="lg" style={{ width: '300px' }}>
+                  <Heading variant="h3" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{match.university}</Heading>
+                  <Text color="text.secondary" style={{ fontSize: '0.875rem', marginBottom: '1rem' }}>{match.program}</Text>
+                  <Text style={{ marginBottom: '0.5rem' }}>Match Score: {match.matchScore}%</Text>
+                  <Button size="sm" variant="outline" fullWidth>
                     View Details
                   </Button>
                 </Card>
@@ -51,16 +49,15 @@ const StudentDashboard: React.FC = () => {
             </Flex>
           </Box>
         ) : (
-          <Box textAlign="center" py="3xl">
+          <Box style={{ textAlign: 'center' }} py="3xl">
             <Box 
-              bg="background.paper" 
+              bg="surface" 
               p="xl" 
               borderRadius="lg" 
-              maxWidth="600px" 
-              mx="auto"
+              style={{ maxWidth: '600px', margin: '0 auto' }}
             >
-              <Heading as="h2" mb="md" fontSize="xl">Get Started</Heading>
-              <Text color="text.secondary" mb="xl">
+              <Heading variant="h2" style={{ marginBottom: '1rem', fontSize: '2rem' }}>Get Started</Heading>
+              <Text color="text.secondary" style={{ marginBottom: '2rem' }}>
                 Click the "Find Matches" button to start your journey to finding the perfect study abroad program.
                 Our AI assistant will ask you a few questions to understand your preferences.
               </Text>

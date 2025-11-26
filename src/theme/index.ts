@@ -7,6 +7,8 @@ export const theme = {
     background: '#F9FAFB',
     surface: '#FFFFFF',
     error: '#EF4444',
+    success: '#10B981',
+    warning: '#F59E0B',
     text: {
       primary: '#111827',
       secondary: '#4B5563',

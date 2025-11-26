@@ -1,6 +1,6 @@
 import React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { Box, Container } from '../../theme/styled';
+import { Outlet } from 'react-router-dom';
+import { PageContainer, MainContent, Container } from '../../theme/styled';
 import Navbar from './Navbar';
 
 interface LayoutProps {
@@ -9,25 +9,15 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ isAuthenticated = false, children }) => {
-  const navigate = useNavigate();
-
   return (
-    <Box minHeight="100vh" display="flex" flexDirection="column">
+    <PageContainer>
       <Navbar isAuthenticated={isAuthenticated} />
-      <Box 
-        as="main" 
-        flex={1} 
-        py="xl"
-        sx={{
-          backgroundColor: 'background.default',
-          minHeight: 'calc(100vh - 64px)'
-        }}
-      >
-        <Container maxWidth="xl">
+      <MainContent>
+        <Container>
           {children || <Outlet />}
         </Container>
-      </Box>
-    </Box>
+      </MainContent>
+    </PageContainer>
   );
 };
 

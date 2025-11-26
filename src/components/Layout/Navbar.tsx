@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Nav, NavContainer, Flex, Button, Box, Avatar } from '../../theme/styled';
+import { Nav, NavContainer, Flex, Button, Avatar, Heading } from '../../theme/styled';
 
 interface NavbarProps {
   isAuthenticated?: boolean;
@@ -21,9 +21,9 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated = false }) => {
       <NavContainer>
         <Flex justify="space-between" align="center">
           <Link to="/">
-            <Box as="h1" fontSize="1.5rem" fontWeight={700} color="primary">
+            <Heading variant="h4" color="primary">
               UniCounsel
-            </Box>
+            </Heading>
           </Link>
           
           {!isAuthPage && !isAuthenticated && (
@@ -40,7 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated = false }) => {
           {isAuthenticated && (
             <Flex gap="md" align="center">
               <Button 
-                variant="ghost" 
+                variant="text" 
                 onClick={() => navigate('/dashboard')}
                 size="sm"
               >
