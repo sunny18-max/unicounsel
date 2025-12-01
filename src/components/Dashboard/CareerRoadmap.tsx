@@ -163,7 +163,6 @@ const roadmapData: Record<string, {
 };
 
 export const CareerRoadmap = () => {
-  const { matches } = useMatches();
   const [selectedField, setSelectedField] = useState('Computer Science');
   const [selectedSemester, setSelectedSemester] = useState(1);
 

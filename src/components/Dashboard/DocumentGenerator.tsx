@@ -30,7 +30,7 @@ export const DocumentGenerator = () => {
 
   const [sopData, setSOPData] = useState({
     targetProgram: '',
-    university: selectedUniversity,
+    university: '',
     motivation: '',
     background: '',
     goals: '',
