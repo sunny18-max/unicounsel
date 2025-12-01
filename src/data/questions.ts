@@ -33,20 +33,20 @@ export const questions: Question[] = [
   },
   {
     id: 'budget',
-    text: "What is your budget range per year?",
+    text: "What is your budget range per year for tuition and living expenses?",
     placeholder: "e.g., $20,000 - $40,000",
     required: true
   },
   {
     id: 'english',
-    text: "Do you have an English proficiency score?",
-    placeholder: "e.g., IELTS 7.0, TOEFL 100",
+    text: "Do you have an English proficiency score like IELTS or TOEFL?",
+    placeholder: "e.g., IELTS 7.0, TOEFL 100, or None",
     required: false
   },
   {
     id: 'countries',
     text: "Which countries do you prefer to study in?",
-    placeholder: "e.g., USA, UK, Canada, Australia",
+    placeholder: "e.g., USA, UK, Canada, Australia, Germany",
     required: false
   },
   {
@@ -56,3 +56,65 @@ export const questions: Question[] = [
     required: false
   }
 ];
+
+// Suggested responses for common questions
+export const suggestedAnswers: Record<string, string[]> = {
+  field: [
+    'Computer Science',
+    'Business Administration',
+    'Engineering',
+    'Medicine',
+    'Data Science',
+    'Psychology',
+    'Law',
+    'Arts & Design'
+  ],
+  budget: [
+    '$10,000 - $20,000',
+    '$20,000 - $40,000',
+    '$40,000 - $60,000',
+    '$60,000+'
+  ],
+  countries: [
+    'USA',
+    'UK',
+    'Canada',
+    'Australia',
+    'Germany',
+    'Netherlands',
+    'Ireland',
+    'New Zealand'
+  ],
+  english: [
+    'IELTS 6.5',
+    'IELTS 7.0',
+    'IELTS 7.5',
+    'TOEFL 90',
+    'TOEFL 100',
+    'None'
+  ],
+  gaps: [
+    '0 years',
+    '1 year',
+    '2 years',
+    '3+ years'
+  ],
+  nationality: [
+    'Indian',
+    'Chinese',
+    'Nigerian',
+    'Pakistani',
+    'Bangladeshi',
+    'Vietnamese',
+    'Other'
+  ],
+  marks: [
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90%+',
+    '6.0-7.0 CGPA',
+    '7.0-8.0 CGPA',
+    '8.0+ CGPA'
+  ]
+};

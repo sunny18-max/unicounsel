@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 
 // Google OAuth Configuration
-const GOOGLE_CLIENT_ID = '1073684776924-dtuue457sas2dmrb7jqmaelt9v7572k1.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '1073684776924-tcejleb7o32m3von0igha9a3r0bgc5ah.apps.googleusercontent.com';
 
 // Google icon SVG component
 const GoogleIcon = () => (
@@ -79,32 +79,31 @@ declare global {
 export const GoogleSignIn = ({ onSuccess, mode = 'signin' }: GoogleSignInProps) => {
   const navigate = useNavigate();
 
-  const handleCredentialResponse = (response: CredentialResponse) => {
+  const handleCredentialResponse = async (response: CredentialResponse) => {
     try {
-      // Decode the JWT token to get user info
-      const base64Url = response.credential.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ credential: response.credential }),
+      });
 
-      const userInfo = JSON.parse(jsonPayload);
-      
-      // Store user info
-      const user = {
-        email: userInfo.email,
-        name: userInfo.name,
-        picture: userInfo.picture,
-        sub: userInfo.sub,
-      };
-      
+      if (!res.ok) {
+        throw new Error('Google authentication failed');
+      }
+
+      const data = await res.json();
+
+      if (!data || !data.user) {
+        throw new Error('Invalid response from authentication server');
+      }
+
+      const user = data.user;
+
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('isAuthenticated', 'true');
-      
-      // Call success callback and navigate
+
       onSuccess();
       navigate('/onboarding');
     } catch (error) {
@@ -114,22 +113,6 @@ export const GoogleSignIn = ({ onSuccess, mode = 'signin' }: GoogleSignInProps) 
   };
 
   const handleGoogleSignIn = () => {
-    // Check if running on localhost
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    if (isLocalhost) {
-      alert(
-        '🔒 Google Sign-In on Localhost\n\n' +
-        'Google Sign-In requires a production domain to work properly.\n\n' +
-        '✅ For testing, please use the "Continue as Demo User" button below.\n\n' +
-        'To enable Google Sign-In in production:\n' +
-        '1. Deploy your app to a production domain\n' +
-        '2. Add the domain to Google Cloud Console authorized domains\n' +
-        '3. Update the OAuth client settings with your domain'
-      );
-      return;
-    }
-
     if (window.google) {
       try {
         window.google.accounts.id.initialize({

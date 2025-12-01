@@ -47,12 +47,13 @@ export interface UniversityMatch {
   };
   visaFit: VisaFitLevel;
   visaFitReason: string;
-  estimatedCost: {
+  // Optional fields - only present if backed by real structured data
+  estimatedCost?: {
     tuition: number;
     living: number;
     total: number;
   };
-  requirements: {
+  requirements?: {
     minScore: string;
     documents: string[];
     nextIntakes: string[];

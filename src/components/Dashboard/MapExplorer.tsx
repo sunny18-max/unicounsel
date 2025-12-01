@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMatches } from '@/context/MatchContext';
 import { MapPin, Utensils, Briefcase, Home as HomeIcon, Navigation, AlertCircle } from 'lucide-react';
+import { universityApi } from '@/services/api/universityApi';
+import type { UniversityData } from '@/lib/csvParser';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -23,20 +25,73 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// City coordinates mapping (approximate)
+// City coordinates mapping (comprehensive)
 const cityCoordinates: Record<string, { lat: number; lng: number }> = {
+  // USA
   'Cambridge': { lat: 42.3601, lng: -71.0942 },
+  'Boston': { lat: 42.3601, lng: -71.0942 },
+  'New York': { lat: 40.7128, lng: -74.0060 },
+  'Los Angeles': { lat: 34.0522, lng: -118.2437 },
+  'Chicago': { lat: 41.8781, lng: -87.6298 },
+  'San Francisco': { lat: 37.7749, lng: -122.4194 },
+  'Seattle': { lat: 47.6062, lng: -122.3321 },
+  'Austin': { lat: 30.2672, lng: -97.7431 },
+  
+  // Canada
   'Toronto': { lat: 43.6629, lng: -79.3957 },
-  'Munich': { lat: 48.1351, lng: 11.5820 },
-  'Berlin': { lat: 52.5200, lng: 13.4050 },
-  'London': { lat: 51.5074, lng: -0.1278 },
-  'Manchester': { lat: 53.4808, lng: -2.2426 },
-  'Sydney': { lat: -33.8688, lng: 151.2093 },
-  'Melbourne': { lat: -37.8136, lng: 144.9631 },
   'Vancouver': { lat: 49.2827, lng: -123.1207 },
   'Montreal': { lat: 45.5017, lng: -73.5673 },
+  'Ottawa': { lat: 45.4215, lng: -75.6972 },
+  
+  // UK
+  'London': { lat: 51.5074, lng: -0.1278 },
+  'Manchester': { lat: 53.4808, lng: -2.2426 },
+  'Edinburgh': { lat: 55.9533, lng: -3.1883 },
+  'Birmingham': { lat: 52.4862, lng: -1.8904 },
+  'Oxford': { lat: 51.7520, lng: -1.2577 },
+  
+  // Australia
+  'Sydney': { lat: -33.8688, lng: 151.2093 },
+  'Melbourne': { lat: -37.8136, lng: 144.9631 },
+  'Brisbane': { lat: -27.4698, lng: 153.0251 },
+  'Perth': { lat: -31.9505, lng: 115.8605 },
+  
+  // Germany
+  'Munich': { lat: 48.1351, lng: 11.5820 },
+  'Berlin': { lat: 52.5200, lng: 13.4050 },
+  'Frankfurt': { lat: 50.1109, lng: 8.6821 },
+  'Hamburg': { lat: 53.5511, lng: 9.9937 },
+  
+  // Other Europe
   'Paris': { lat: 48.8566, lng: 2.3522 },
   'Dublin': { lat: 53.3498, lng: -6.2603 },
+  'Amsterdam': { lat: 52.3676, lng: 4.9041 },
+  'Copenhagen': { lat: 55.6761, lng: 12.5683 },
+  'Stockholm': { lat: 59.3293, lng: 18.0686 },
+  
+  // Asia
+  'Singapore': { lat: 1.3521, lng: 103.8198 },
+  'Hong Kong': { lat: 22.3193, lng: 114.1694 },
+  'Tokyo': { lat: 35.6762, lng: 139.6503 },
+  'Seoul': { lat: 37.5665, lng: 126.9780 },
+};
+
+// Get coordinates for a city (with fuzzy matching)
+const getCityCoordinates = (cityName: string): { lat: number; lng: number } | null => {
+  // Direct match
+  if (cityCoordinates[cityName]) {
+    return cityCoordinates[cityName];
+  }
+  
+  // Fuzzy match - check if city name contains or is contained in any key
+  const cityLower = cityName.toLowerCase();
+  for (const [key, coords] of Object.entries(cityCoordinates)) {
+    if (cityLower.includes(key.toLowerCase()) || key.toLowerCase().includes(cityLower)) {
+      return coords;
+    }
+  }
+  
+  return null;
 };
 
 // Generate mock locations based on city
@@ -79,20 +134,71 @@ function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }
 
 export const MapExplorer = () => {
   const { matches } = useMatches();
+  const [allUniversities, setAllUniversities] = useState<UniversityData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Load real universities from API
+  useEffect(() => {
+    setIsLoading(true);
+    universityApi.getAll()
+      .then(unis => {
+        setAllUniversities(unis);
+      })
+      .catch(error => {
+        console.error('Failed to load universities:', error);
+        setAllUniversities([]);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
   
   const universities = useMemo(() => {
-    return matches.map((match) => {
-      const coords = cityCoordinates[match.city] || { lat: 0, lng: 0 };
-      return {
-        id: match.id,
-        name: match.universityName,
-        lat: coords.lat,
-        lng: coords.lng,
-        city: `${match.city}, ${match.country}`,
-        cityName: match.city
-      };
-    }).filter(u => u.lat !== 0 && u.lng !== 0);
-  }, [matches]);
+    // If we have matches from the assessment, use them with coordinates
+    if (matches.length > 0) {
+      return matches.map((match) => {
+        // Find the university in the real data to get actual coordinates
+        const uniData = allUniversities.find(u => 
+          u.name.toLowerCase() === match.universityName.toLowerCase() ||
+          u.name.toLowerCase().includes(match.universityName.toLowerCase()) ||
+          match.universityName.toLowerCase().includes(u.name.toLowerCase())
+        );
+        
+        // Use real coordinates from university data, fallback to city coordinates
+        const cityCoords = getCityCoordinates(match.city);
+        const lat = uniData?.latitude || cityCoords?.lat || 0;
+        const lng = uniData?.longitude || cityCoords?.lng || 0;
+        
+        return {
+          id: match.id,
+          name: match.universityName,
+          lat: lat,
+          lng: lng,
+          city: `${match.city}, ${match.country}`,
+          cityName: match.city
+        };
+      }).filter(u => u.lat !== 0 && u.lng !== 0);
+    }
+    
+    // Otherwise, use real universities from API (sample of diverse universities)
+    const uniqueCountries = new Set<string>();
+    const sample: UniversityData[] = [];
+    
+    for (const uni of allUniversities) {
+      if (!uniqueCountries.has(uni.country) && uni.latitude !== 0 && uni.longitude !== 0) {
+        uniqueCountries.add(uni.country);
+        sample.push(uni);
+        if (sample.length >= 20) break;
+      }
+    }
+    
+    return sample.map((uni, index) => ({
+      id: `uni-${index}`,
+      name: uni.name,
+      lat: uni.latitude,
+      lng: uni.longitude,
+      city: `${uni.city}, ${uni.country}`,
+      cityName: uni.city
+    }));
+  }, [matches, allUniversities]);
 
   const [selectedUniversity, setSelectedUniversity] = useState(universities[0]);
   const [activeTab, setActiveTab] = useState('restaurants');
@@ -111,36 +217,6 @@ export const MapExplorer = () => {
     }
   }, [selectedUniversity]);
 
-  if (universities.length === 0) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-heading-2 text-foreground mb-2">Location Explorer</h1>
-          <p className="text-body text-muted-foreground">
-            Explore nearby restaurants, places, and part-time job locations
-          </p>
-        </div>
-        <Card className="border-glow-cyan/30">
-          <CardContent className="pt-6">
-            <div className="text-center py-12">
-              <AlertCircle className="h-16 w-16 text-glow-cyan mx-auto mb-4" />
-              <h3 className="text-heading-3 text-foreground mb-2">No Locations Available</h3>
-              <p className="text-body text-muted-foreground mb-6">
-                Complete the assessment to explore locations around your matched universities.
-              </p>
-              <Button 
-                className="bg-glow-cyan text-background hover:bg-glow-cyan/90"
-                onClick={() => window.location.href = '/onboarding'}
-              >
-                Start Assessment
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   if (!selectedUniversity) {
     return null;
   }
@@ -154,11 +230,48 @@ export const MapExplorer = () => {
         </p>
       </div>
 
+      {/* Info Banner when no matches */}
+      {matches.length === 0 && !isLoading && (
+        <Card className="border-glow-cyan/30 bg-glow-cyan/5">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-glow-cyan mt-0.5 flex-shrink-0" />
+              <div>
+                <h3 className="text-body font-semibold text-foreground mb-1">Explore Real Universities</h3>
+                <p className="text-body-sm text-muted-foreground mb-3">
+                  You're currently viewing real universities from our database. Complete the assessment to see personalized matches based on your profile and explore locations around your matched universities.
+                </p>
+                <Button 
+                  size="sm"
+                  className="bg-glow-cyan text-background hover:bg-glow-cyan/90"
+                  onClick={() => window.location.href = '/onboarding'}
+                >
+                  Start Assessment
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {isLoading && (
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-body text-muted-foreground">Loading universities...</p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* University Selector */}
       <Card>
         <CardHeader>
           <CardTitle>Select University</CardTitle>
-          <CardDescription>Choose a university to explore its surroundings</CardDescription>
+          <CardDescription>
+            {matches.length > 0 
+              ? 'Choose from your matched universities to explore its surroundings'
+              : 'Choose a sample university to explore (complete assessment for personalized matches)'
+            }
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Select 

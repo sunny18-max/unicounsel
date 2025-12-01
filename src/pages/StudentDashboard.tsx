@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Container, Flex, Heading, Text, Card } from '../theme/styled';
-import { VoiceAssistant } from '../components/VoiceAssistant';
+import { FuturisticVoiceAssistant } from '../components/VoiceAssistant/FuturisticVoiceAssistant';
 
 const StudentDashboard: React.FC = () => {
   const [showVoiceAssistant, setShowVoiceAssistant] = React.useState(false);
@@ -16,7 +16,7 @@ const StudentDashboard: React.FC = () => {
   };
 
   if (showVoiceAssistant) {
-    return <VoiceAssistant onComplete={handleVoiceAssistantComplete} />;
+    return <FuturisticVoiceAssistant onComplete={handleVoiceAssistantComplete} />;
   }
 
   return (

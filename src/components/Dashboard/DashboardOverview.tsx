@@ -14,7 +14,8 @@ import {
   CheckCircle2,
   Clock,
   GraduationCap,
-  AlertCircle
+  AlertCircle,
+  Building2
 } from 'lucide-react';
 
 export const DashboardOverview = () => {
@@ -25,7 +26,7 @@ export const DashboardOverview = () => {
   const stats = {
     totalMatches: matches.length,
     avgTuition: matches.length > 0 
-      ? Math.round(matches.reduce((sum, m) => sum + m.estimatedCost.tuition, 0) / matches.length)
+      ? Math.round(matches.reduce((sum, m) => sum + (m.estimatedCost?.tuition || 0), 0) / matches.length)
       : 0,
     scholarshipsAvailable: Math.floor(matches.length * 0.5), // Estimate 50% have scholarships
     countries: [...new Set(matches.map(m => m.country))].length,
@@ -51,12 +52,6 @@ export const DashboardOverview = () => {
      profileScores.financialStrength + profileScores.academicFit) / 4
   );
 
-  // University images mapping
-  const getUniversityImage = (universityName: string) => {
-    const seed = encodeURIComponent(universityName.toLowerCase().replace(/\s+/g, '-'));
-    return `https://source.unsplash.com/200x150/?university,${seed},campus,building`;
-  };
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -66,7 +61,7 @@ export const DashboardOverview = () => {
         </h1>
         <p className="text-body text-muted-foreground">
           {matches.length > 0 
-            ? `You have ${matches.length} perfect matches based on your profile`
+            ? `You have ${matches.length} university matches across ${stats.countries} ${stats.countries === 1 ? 'country' : 'countries'} based on your profile`
             : "Complete your assessment to see personalized university matches"
           }
         </p>
@@ -152,7 +147,7 @@ export const DashboardOverview = () => {
               <CardContent>
                 <div className="text-heading-2 text-foreground">{stats.totalMatches}</div>
                 <p className="text-body-sm text-muted-foreground mt-1">
-                  Perfect matches
+                  Universities matched
                 </p>
               </CardContent>
             </Card>
@@ -211,62 +206,61 @@ export const DashboardOverview = () => {
                   variant="outline"
                   onClick={() => navigate('/onboarding')}
                 >
-                  View All
+                  View All {matches.length} Matches
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {matches.slice(0, 3).map((match, index) => (
-                  <div key={match.id} className="flex items-start gap-4 p-4 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors">
-                    <div className="flex-shrink-0">
-                      <img 
-                        src={getUniversityImage(match.universityName)}
-                        alt={match.universityName}
-                        className="w-24 h-24 rounded-lg object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = `https://source.unsplash.com/200x150/?university,campus,building`;
-                        }}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="text-xs">
-                          #{index + 1}
-                        </Badge>
-                        {index === 0 && (
-                          <Badge className="bg-glow-cyan text-background text-xs">
-                            Top Match
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h4 className="text-body font-semibold text-foreground">{match.universityName}</h4>
-                          <p className="text-body-sm text-muted-foreground flex items-center gap-1">
-                            <MapPin className="h-3 w-3" />
-                            {match.city}, {match.country}
+              <div className="space-y-3">
+                {matches.slice(0, 5).map((match, index) => (
+                  <div key={match.id} className="p-4 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors border border-border hover:border-glow-cyan/30">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-start gap-3 flex-1">
+                        <div className="w-12 h-12 rounded-lg bg-glow-cyan/10 flex items-center justify-center flex-shrink-0">
+                          <Building2 className="h-6 w-6 text-glow-cyan" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <Badge variant="outline" className="text-xs">
+                              #{index + 1}
+                            </Badge>
+                            {index === 0 && (
+                              <Badge className="bg-glow-cyan text-background text-xs">
+                                Top Match
+                              </Badge>
+                            )}
+                          </div>
+                          <h4 className="text-body font-semibold text-foreground mb-1 truncate">{match.universityName}</h4>
+                          <p className="text-body-sm text-muted-foreground flex items-center gap-1 mb-2">
+                            <MapPin className="h-3 w-3 flex-shrink-0" />
+                            <span className="truncate">{match.city}, {match.country}</span>
                           </p>
                         </div>
-                        <div className="text-right">
-                          <div className="text-heading-4 text-glow-cyan">{match.matchScore}%</div>
-                          <p className="text-body-sm text-muted-foreground">Match</p>
-                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-body-sm">
-                        <GraduationCap className="h-4 w-4 text-glow-blue" />
-                        <span className="text-foreground">{match.programName}</span>
-                        <Badge variant="outline" className="text-xs">{match.degree}</Badge>
+                      <div className="text-right ml-3 flex-shrink-0">
+                        <div className="text-heading-4 text-glow-cyan">{match.matchScore}%</div>
+                        <p className="text-body-sm text-muted-foreground">Match</p>
                       </div>
-                      <div className="mt-2 flex items-center gap-4 text-body-sm text-muted-foreground">
-                        <span>Tuition: {formatCurrency(match.estimatedCost.tuition)}/yr</span>
-                        <span>•</span>
-                        <span>Visa Fit: <span className={
-                          match.visaFit === 'High' ? 'text-success' :
-                          match.visaFit === 'Medium' ? 'text-warning' : 'text-error'
-                        }>{match.visaFit}</span></span>
-                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      <GraduationCap className="h-4 w-4 text-glow-blue flex-shrink-0" />
+                      <span className="text-body-sm text-foreground flex-1 min-w-0 truncate">{match.programName}</span>
+                      <Badge variant="outline" className="text-xs flex-shrink-0">{match.degree}</Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between gap-4 text-body-sm flex-wrap">
+                      <span className="text-muted-foreground">
+                        <span className="font-medium text-foreground">{formatCurrency(match.estimatedCost?.tuition || 0)}</span>/yr
+                      </span>
+                      <span className="text-muted-foreground">•</span>
+                      <span className="text-muted-foreground">
+                        Visa: <span className={
+                          match.visaFit === 'High' ? 'text-success font-medium' :
+                          match.visaFit === 'Medium' ? 'text-warning font-medium' : 'text-error font-medium'
+                        }>{match.visaFit}</span>
+                      </span>
                     </div>
                   </div>
                 ))}

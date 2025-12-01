@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { MapPin, GraduationCap, DollarSign, Trash2, ExternalLink, AlertCircle } from 'lucide-react';
 import type { UniversityMatch } from '@/types';
 import { formatCurrency } from '@/lib/formatters';
-import { cn } from '@/lib/utils';
+import { cn, getUniversityImage } from '@/lib/utils';
 
 export const FavoritesPage = () => {
   const [favorites, setFavorites] = useState<UniversityMatch[]>([]);
@@ -44,14 +44,6 @@ export const FavoritesPage = () => {
       default:
         return 'bg-muted/20 text-muted-foreground border-muted/50';
     }
-  };
-
-  // University images mapping (using Unsplash for university/building images)
-  const getUniversityImage = (universityName: string) => {
-    // Use Unsplash API for university/building images
-    // Generate a consistent seed based on university name
-    const seed = encodeURIComponent(universityName.toLowerCase().replace(/\s+/g, '-'));
-    return `https://source.unsplash.com/400x300/?university,${seed},campus,building`;
   };
 
   if (favorites.length === 0) {

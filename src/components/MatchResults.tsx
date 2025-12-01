@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
-import { MapPin, GraduationCap, DollarSign, FileText, Calendar, Bookmark, ArrowRight } from 'lucide-react';
+import { MapPin, GraduationCap, DollarSign, FileText, Calendar, Bookmark, ArrowRight, Building2 } from 'lucide-react';
 import type { UniversityMatch } from '@/types';
 import { formatCurrency } from '@/lib/formatters';
 import { cn } from '@/lib/utils';
@@ -22,12 +22,6 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
     const saved = JSON.parse(localStorage.getItem('savedMatches') || '[]');
     setSavedIds(new Set(saved.map((m: UniversityMatch) => m.id)));
   }, []);
-
-  // University images mapping (using Unsplash for university/building images)
-  const getUniversityImage = (universityName: string) => {
-    const seed = encodeURIComponent(universityName.toLowerCase().replace(/\s+/g, '-'));
-    return `https://source.unsplash.com/800x400/?university,${seed},campus,building`;
-  };
 
   const handleApply = (match: UniversityMatch) => {
     // Create a Google search URL for the university's official website
@@ -102,31 +96,22 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
                   index === 0 && "border-glow-cyan glow-cyan"
                 )}
               >
-                {/* University Image */}
-                <div className="relative h-56 overflow-hidden bg-secondary">
-                  <img 
-                    src={getUniversityImage(match.universityName)}
-                    alt={match.universityName}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = `https://source.unsplash.com/800x400/?university,campus,building`;
-                    }}
-                  />
-                  <div className="absolute top-3 right-3 flex gap-2">
-                    {index === 0 && (
-                      <Badge className="bg-glow-cyan text-background">
-                        Best Match
-                      </Badge>
-                    )}
-                    <Badge className="bg-background/90 text-foreground">
-                      #{index + 1}
-                    </Badge>
-                  </div>
-                </div>
-
                 <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex items-start gap-4">
+                    <div className="w-16 h-16 rounded-lg bg-glow-cyan/10 flex items-center justify-center flex-shrink-0">
+                      <Building2 className="h-8 w-8 text-glow-cyan" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <Badge variant="outline">
+                          #{index + 1}
+                        </Badge>
+                        {index === 0 && (
+                          <Badge className="bg-glow-cyan text-background">
+                            Best Match
+                          </Badge>
+                        )}
+                      </div>
                       <CardTitle className="text-heading-3 mb-2">
                         {match.universityName}
                       </CardTitle>
@@ -135,7 +120,7 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
                         {match.city}, {match.country}
                       </CardDescription>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <div className="text-heading-2 text-glow-cyan font-bold">
                         {match.matchScore}
                       </div>
@@ -215,19 +200,19 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
                       <div className="bg-card p-4 rounded-lg border border-border">
                         <div className="text-body-sm text-muted-foreground mb-1">Tuition</div>
                         <div className="text-body font-semibold text-foreground">
-                          {formatCurrency(match.estimatedCost.tuition)}
+                          {formatCurrency(match.estimatedCost?.tuition || 0)}
                         </div>
                       </div>
                       <div className="bg-card p-4 rounded-lg border border-border">
                         <div className="text-body-sm text-muted-foreground mb-1">Living</div>
                         <div className="text-body font-semibold text-foreground">
-                          {formatCurrency(match.estimatedCost.living)}
+                          {formatCurrency(match.estimatedCost?.living || 0)}
                         </div>
                       </div>
                       <div className="bg-card p-4 rounded-lg border border-border">
                         <div className="text-body-sm text-muted-foreground mb-1">Total</div>
                         <div className="text-body font-semibold text-glow-cyan">
-                          {formatCurrency(match.estimatedCost.total)}
+                          {formatCurrency(match.estimatedCost?.total || 0)}
                         </div>
                       </div>
                     </div>
@@ -244,7 +229,7 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
                         <div>
                           <div className="text-body-sm font-semibold mb-1">Minimum Score</div>
                           <div className="text-body-sm text-muted-foreground">
-                            {match.requirements.minScore}
+                            {match.requirements?.minScore || 'N/A'}
                           </div>
                         </div>
                       </div>
@@ -253,7 +238,7 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
                         <div>
                           <div className="text-body-sm font-semibold mb-1">Documents Required</div>
                           <div className="flex flex-wrap gap-2">
-                            {match.requirements.documents.map((doc) => (
+                            {(match.requirements?.documents || []).map((doc) => (
                               <Badge key={doc} variant="outline" className="text-xs">
                                 {doc}
                               </Badge>
@@ -266,7 +251,7 @@ export const MatchResults = ({ matches }: MatchResultsProps) => {
                         <div>
                           <div className="text-body-sm font-semibold mb-1">Next Intakes</div>
                           <div className="text-body-sm text-muted-foreground">
-                            {match.requirements.nextIntakes.join(', ')}
+                            {(match.requirements?.nextIntakes || []).join(', ') || 'N/A'}
                           </div>
                         </div>
                       </div>

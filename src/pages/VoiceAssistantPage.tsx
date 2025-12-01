@@ -1,4 +1,4 @@
-import { VoiceAssistant } from '@/components/VoiceAssistant';
+import { FuturisticVoiceAssistant } from '@/components/VoiceAssistant/FuturisticVoiceAssistant';
 import type { UniversityMatch } from '@/types';
 
 interface VoiceAssistantPageProps {
@@ -6,7 +6,7 @@ interface VoiceAssistantPageProps {
 }
 
 const VoiceAssistantPage = ({ onComplete }: VoiceAssistantPageProps) => {
-  return <VoiceAssistant onComplete={onComplete} />;
+  return <FuturisticVoiceAssistant onComplete={onComplete} />;
 };
 
 export default VoiceAssistantPage;
