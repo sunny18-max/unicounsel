@@ -34,7 +34,7 @@ export const VisaProbability = () => {
     
     // Financial score based on budget vs average cost
     const avgCost = matches.length > 0 
-      ? matches.reduce((sum, m) => sum + m.estimatedCost.total, 0) / matches.length
+      ? matches.reduce((sum, m) => sum + (m.estimatedCost?.total || 0), 0) / matches.length
       : 30000;
     const financialScore = Math.min(100, (studentProfile.budgetMax / avgCost) * 100);
 

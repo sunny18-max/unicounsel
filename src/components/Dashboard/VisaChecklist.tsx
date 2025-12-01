@@ -7,7 +7,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useMatches } from '@/context/MatchContext';
 import { 
-  FileCheck2, 
   Upload, 
   CheckCircle2, 
   Clock, 
@@ -87,7 +86,6 @@ const documentsByCountry: Record<string, Document[]> = {
 };
 
 export const VisaChecklist = () => {
-  const { matches } = useMatches();
   const [selectedCountry, setSelectedCountry] = useState('USA');
   const [documents, setDocuments] = useState<Document[]>(documentsByCountry[selectedCountry]);
   const [filterCategory, setFilterCategory] = useState('all');

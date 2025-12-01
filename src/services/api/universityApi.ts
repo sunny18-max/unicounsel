@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, apiRequest, type ApiResponse, type PaginatedResponse } from '@/config/api';
+import { API_ENDPOINTS, apiRequest, type PaginatedResponse } from '@/config/api';
 import type { UniversityData } from '@/lib/csvParser';
 
 export const universityApi = {

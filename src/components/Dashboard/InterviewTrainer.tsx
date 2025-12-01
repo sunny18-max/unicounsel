@@ -3,16 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Video, 
   Play, 
   Pause, 
   RotateCcw,
   CheckCircle2,
-  AlertCircle,
   TrendingUp,
-  Mic,
   Camera,
   Star,
   MessageSquare
@@ -120,7 +117,6 @@ export const InterviewTrainer = () => {
   const [interviewType, setInterviewType] = useState<'university' | 'visa'>('university');
   const [isRecording, setIsRecording] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [sessions, setSessions] = useState<InterviewSession[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
 
   const questions = interviewType === 'university' ? universityQuestions : visaQuestions;

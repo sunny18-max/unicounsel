@@ -1,12 +1,10 @@
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { useMatches } from '@/context/MatchContext';
-import { Briefcase, TrendingUp, DollarSign, Users, Award, BookOpen, Clock, AlertCircle, Building2, Target } from 'lucide-react';
+import { Briefcase, TrendingUp, DollarSign, Award, BookOpen, Clock, AlertCircle, Building2, Target } from 'lucide-react';
 
 interface JobData {
   role: string;

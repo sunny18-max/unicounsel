@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { useMatches } from '@/context/MatchContext';
 import { Award, Search, DollarSign, Calendar, CheckCircle2, Clock, TrendingUp, AlertCircle, ExternalLink } from 'lucide-react';
@@ -112,7 +111,7 @@ const mockScholarships: Scholarship[] = [
 ];
 
 export const ScholarshipFinder = () => {
-  const { matches, studentProfile } = useMatches();
+  const { matches } = useMatches();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCountry, setFilterCountry] = useState('all');
   const [filterType, setFilterType] = useState('all');

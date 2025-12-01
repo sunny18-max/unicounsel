@@ -140,7 +140,7 @@ export const FavoritesPage = () => {
                       <span>Annual Cost</span>
                     </div>
                     <span className="text-body font-semibold text-glow-cyan">
-                      {formatCurrency(match.estimatedCost.total)}
+                      {formatCurrency(match.estimatedCost?.total || 0)}
                     </span>
                   </div>
 

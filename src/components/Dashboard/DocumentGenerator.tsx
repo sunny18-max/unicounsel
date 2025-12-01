@@ -8,13 +8,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useMatches } from '@/context/MatchContext';
-import { FileText, Download, Copy, Sparkles, CheckCircle2, FileCheck, User, Briefcase, GraduationCap, AlertCircle } from 'lucide-react';
+import { FileText, Download, Copy, Sparkles, CheckCircle2, FileCheck, User, AlertCircle } from 'lucide-react';
 
 export const DocumentGenerator = () => {
   const { matches, studentProfile } = useMatches();
   const [documentType, setDocumentType] = useState<'resume' | 'sop' | 'lor'>('resume');
   const [selectedCountry, setSelectedCountry] = useState('USA');
-  const [selectedUniversity, setSelectedUniversity] = useState('');
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
 

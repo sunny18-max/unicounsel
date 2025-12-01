@@ -21,20 +21,6 @@ import { CountrySwitching } from '@/components/Dashboard/CountrySwitching';
 import { StudyScore } from '@/components/Dashboard/StudyScore';
 import { TimetablePlanner } from '@/components/Dashboard/TimetablePlanner';
 import { 
-  Calculator, 
-  Award, 
-  FileText, 
-  Home, 
-  Briefcase, 
-  MapIcon, 
-  FileCheck2, 
-  Shield, 
-  MessageSquare, 
-  Video, 
-  FolderLock, 
-  RefreshCw,
-  TrendingUp,
-  Calendar,
   Users,
   Zap,
   MessageCircle

@@ -2,12 +2,10 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useMatches } from '@/context/MatchContext';
 import { 
-  GraduationCap, 
   Briefcase, 
   Award, 
   BookOpen, 
@@ -17,8 +15,7 @@ import {
   ChevronRight,
   Target,
   Lightbulb,
-  FileCode,
-  Users
+  FileCode
 } from 'lucide-react';
 
 interface Semester {
@@ -166,7 +163,7 @@ const roadmapData: Record<string, {
 };
 
 export const CareerRoadmap = () => {
-  const { matches, studentProfile } = useMatches();
+  const { matches } = useMatches();
   const [selectedField, setSelectedField] = useState('Computer Science');
   const [selectedSemester, setSelectedSemester] = useState(1);
 

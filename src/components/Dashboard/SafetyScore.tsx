@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useMatches } from '@/context/MatchContext';
 import { 
   Shield, 
   ThermometerSun, 
@@ -14,7 +12,6 @@ import {
   Plane,
   Heart,
   AlertTriangle,
-  TrendingUp,
   MapPin,
   Phone
 } from 'lucide-react';
@@ -240,7 +237,6 @@ const cityData: Record<string, CityData> = {
 };
 
 export const SafetyScore = () => {
-  const { matches } = useMatches();
   const [selectedCity, setSelectedCity] = useState('Boston');
   
   const currentCity = cityData[selectedCity];

@@ -14,12 +14,12 @@ export const FeeComparison = () => {
       id: match.id,
       name: match.universityName,
       country: match.country,
-      tuition: match.estimatedCost.tuition,
-      living: match.estimatedCost.living,
+      tuition: match.estimatedCost?.tuition || 0,
+      living: match.estimatedCost?.living || 0,
       partTimeAvailable: match.country !== 'USA' || match.degree === 'MSc', // Simplified logic
       prRules: match.visaFitReason,
       difficultyLevel: match.matchScore >= 85 ? 'Easy' : match.matchScore >= 70 ? 'Medium' : match.matchScore >= 60 ? 'Hard' : 'Very Hard',
-      totalCost: match.estimatedCost.total
+      totalCost: match.estimatedCost?.total || 0
     }));
   }, [matches]);
 

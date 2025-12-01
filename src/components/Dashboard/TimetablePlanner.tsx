@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar, CheckCircle2, Clock, Bell, Download } from 'lucide-react';
+import { Calendar, Clock, Bell, Download } from 'lucide-react';
 
 interface Task {
   id: string;

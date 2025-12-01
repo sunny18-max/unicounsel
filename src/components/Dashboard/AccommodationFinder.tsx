@@ -3,10 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { useMatches } from '@/context/MatchContext';
-import { Home, MapPin, DollarSign, Users, Wifi, Utensils, Star, Heart, Search, Filter, AlertCircle, ExternalLink } from 'lucide-react';
+import { Home, MapPin, Users, Star, Heart, Search, AlertCircle } from 'lucide-react';
 
 interface Accommodation {
   id: string;

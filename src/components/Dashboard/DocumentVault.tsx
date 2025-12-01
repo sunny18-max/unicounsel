@@ -121,7 +121,7 @@ const mockDocuments: Document[] = [
 ];
 
 export const DocumentVault = () => {
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments);
+  const [documents] = useState<Document[]>(mockDocuments);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
 

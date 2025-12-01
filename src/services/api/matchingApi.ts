@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, apiRequest, type ApiResponse } from '@/config/api';
+import { API_ENDPOINTS, apiRequest } from '@/config/api';
 import type { UniversityMatch, StudentProfile } from '@/types';
 
 export const matchingApi = {

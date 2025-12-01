@@ -1,8 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { useMatches } from '@/context/MatchContext';
 import { 
   TrendingUp, 
   Award,
@@ -10,12 +8,10 @@ import {
   GraduationCap,
   CheckCircle2,
   AlertCircle,
-  Target,
-  TrendingDown
+  Target
 } from 'lucide-react';
 
 export const StudyScore = () => {
-  const { studentProfile } = useMatches();
 
   const overallScore = 78;
   const scores = {
